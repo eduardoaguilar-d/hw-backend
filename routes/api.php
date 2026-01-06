@@ -5,6 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\RewardConfigController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\IngredientController;
 
 Route::post('/login', function (Request $request) {
     $request->validate([
@@ -38,4 +42,40 @@ Route::post('/login', function (Request $request) {
         'message' => 'Login successful',
         'user' => $user
     ]);
+});
+
+// Rutas para pedidos
+Route::prefix('orders')->group(function () {
+    Route::post('/', [OrderController::class, 'store']);
+    Route::get('/', [OrderController::class, 'index']);
+    Route::get('/next', [OrderController::class, 'next']);
+    Route::patch('/{id}/status', [OrderController::class, 'updateStatus']);
+});
+
+// Rutas para recompensas
+Route::prefix('rewards')->group(function () {
+    Route::get('/', [RewardConfigController::class, 'index']);
+    Route::post('/', [RewardConfigController::class, 'store']);
+    Route::get('/{id}', [RewardConfigController::class, 'show']);
+    Route::put('/{id}', [RewardConfigController::class, 'update']);
+    Route::delete('/{id}', [RewardConfigController::class, 'destroy']);
+});
+
+// Rutas para productos (menú)
+Route::prefix('products')->group(function () {
+    Route::get('/', [ProductController::class, 'index']);
+    Route::post('/', [ProductController::class, 'store']);
+    Route::get('/{id}', [ProductController::class, 'show']);
+    Route::put('/{id}', [ProductController::class, 'update']);
+    Route::delete('/{id}', [ProductController::class, 'destroy']);
+    Route::put('/{id}/ingredients', [ProductController::class, 'updateIngredients']);
+});
+
+// Rutas para ingredientes
+Route::prefix('ingredients')->group(function () {
+    Route::get('/', [IngredientController::class, 'index']);
+    Route::post('/', [IngredientController::class, 'store']);
+    Route::get('/{id}', [IngredientController::class, 'show']);
+    Route::put('/{id}', [IngredientController::class, 'update']);
+    Route::delete('/{id}', [IngredientController::class, 'destroy']);
 });
